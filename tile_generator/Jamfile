@@ -1,0 +1,15 @@
+project tile_generator
+	:
+	;
+
+lib tile_generator
+	: bounds_test.cpp
+	  geo_math.cpp
+	  tile_coord.cpp
+	;
+
+exe intersect
+	: tile_generator
+	  ../base_extract//base_extract
+	  intersect.cpp
+	;

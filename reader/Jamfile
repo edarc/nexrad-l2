@@ -1,0 +1,20 @@
+project reader
+	: requirements
+          <define>BOOST_NO_DEFAULTED_FUNCTIONS
+	;
+
+lib reader
+	: ..//libboost_iostreams
+	  archive_primitive.cpp
+          compressed_block.cpp
+          radial_generic_format.cpp
+          rda_message.cpp
+          rda_message_segment.cpp
+	  util.cpp
+          volume_header_record.cpp
+	;
+
+exe dumper
+	: reader
+	  dumper.cpp
+	;

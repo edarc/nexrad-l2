@@ -1,0 +1,99 @@
+project rsme
+	: requirements
+          <define>BOOST_NO_DEFAULTED_FUNCTIONS
+	# <variant>debug:<profiling>on
+	  <variant>debug:<warnings>all
+	  <variant>release,profile:<cflags>-march=prescott
+	  <variant>release,profile:<cflags>-mfpmath=sse
+	  <variant>release,profile:<cflags>-ffast-math
+	  <variant>release,profile:<cflags>-fgcse-las
+	  <variant>release,profile:<cflags>-fgcse-sm
+	  <variant>release,profile:<cflags>-fgcse-after-reload
+	  <variant>release,profile:<cflags>-Wunsafe-loop-optimizations
+	  <variant>release,profile:<cflags>-funsafe-loop-optimizations
+	  <variant>profile:<profiling>off
+	;
+
+lib libboost_serialization : : <name>boost_serialization ;
+lib libboost_date_time : : <name>boost_date_time ;
+lib libbz2 : : <name>bz2 ;
+lib libboost_iostreams : libbz2 : <name>boost_iostreams ;
+lib libz : : <name>z ;
+lib libpng : libz : <name>png ;
+
+##############################################################################
+lib reader
+	: libboost_iostreams
+	  reader/archive_primitive.cpp
+          reader/compressed_block.cpp
+          reader/radial_generic_format.cpp
+          reader/rda_message.cpp
+          reader/rda_message_segment.cpp
+	  reader/binary_util.cpp
+          reader/volume_header_record.cpp
+	;
+
+exe dumper
+	: reader
+	  reader/dumper.cpp
+	;
+
+exe l2meta
+	: reader
+	  reader/l2meta.cpp
+	;
+
+##############################################################################
+lib base_extract
+        : base_extract/simple_cut.cpp
+        ;
+
+exe extract
+	: libboost_date_time
+	  libboost_serialization
+	  reader
+          base_extract
+	  base_extract/extract.cpp
+	;
+
+##############################################################################
+lib tile_generator
+	: libpng
+	  tile_generator/bounds_test.cpp
+	  tile_generator/geo_math.cpp
+	  tile_generator/tile_coord.cpp
+	  tile_generator/sample_cut.cpp
+	  tile_generator/single_site_tile.cpp
+	;
+
+exe intersect
+	: libboost_date_time
+	  libboost_serialization
+	  tile_generator
+	  base_extract
+	  tile_generator/intersect.cpp
+	;
+
+exe generate
+	: libboost_date_time
+	  libboost_serialization
+	  tile_generator
+	  base_extract
+	  tile_generator/generate.cpp
+	;
+
+exe gen-thresh
+	: libboost_date_time
+	  libboost_serialization
+	  tile_generator
+	  base_extract
+	  tile_generator/gen_thresh.cpp
+	;
+
+exe gen-one
+	: libboost_date_time
+	  libboost_serialization
+	  tile_generator
+	  base_extract
+	  tile_generator/gen_one.cpp
+	;

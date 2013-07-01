@@ -1,0 +1,14 @@
+Project radar bounding box to pixel-mercator
+Calculate max-zoom-level tiles inside radar bounding box
+For each tile inside the radar coverage area
+	Test tile for intersection with other radar coverage areas
+	For each pixel in tile
+		Convert pixel coordinates from mercator to lat/lon
+		For each candidate radar site
+			Convert coordinates from lat/lon to radial/distance
+			Locate nearest radar bins and
+			  calculate [interpolated] radar sensed value
+			Calculate mosaic weighting for this radar site
+		Perform reduction on weighted radar values
+		  for all candidate sites
+		Store pixel radar datum

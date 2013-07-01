@@ -1,0 +1,15 @@
+project base_extract
+	:
+	;
+
+lib base_extract
+        : ..//libboost_serialization
+	  ..//libboost_date_time
+	  simple_cut.cpp
+        ;
+
+exe extract
+	: ../reader//reader
+          base_extract
+	  extract.cpp
+	;
