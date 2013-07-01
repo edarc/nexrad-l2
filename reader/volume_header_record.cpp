@@ -26,11 +26,21 @@ operator >> (std::istream & is, volume_header_record & vhr)
 
     // Read the magic string.
     std::string magic = read_string_chunk(is, MAGIC_LEN);
-    // TODO: check magic.
+    if (magic != "AR2V00")
+    {
+        is.seekg(-MAGIC_LEN, std::ios_base::cur);
+        throw volume_header_record::bad_magic();
+    }
     
     // Read record version
     std::string version = read_string_chunk(is, VERSION_LEN);
-    vhr.version = lexical_cast<unsigned int>(version);
+    try
+        { vhr.version = lexical_cast<unsigned int>(version); }
+    catch (boost::bad_lexical_cast & e)
+    {
+        is.seekg(-(MAGIC_LEN + VERSION_LEN), std::ios_base::cur);
+        throw volume_header_record::bad_version(version);
+    }
 
     is.ignore(1); // Drop period
 

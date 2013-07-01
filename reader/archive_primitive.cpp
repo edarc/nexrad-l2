@@ -16,7 +16,14 @@ operator >> (std::istream & is, archive_primitive & ap)
 {
     is.exceptions(std::istream::eofbit | std::istream::badbit |
             std::istream::failbit);
-    is >> ap.header;
+    try
+        { is >> ap.header; }
+    catch (volume_header_record::bad_magic & e)
+    {
+        std::cerr
+            << "warning: No volume header record, attempting to read anyway."
+            << std::endl;
+    }
 
     std::istream_iterator<compressed_block> eos;
     std::istream_iterator<compressed_block> isi(is);
